@@ -87,19 +87,24 @@ const MultichainHome: React.FC = () => {
           </div>
         </div>
 
-        {/* NFT Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-          {tokenIds.map((tokenId) => (
-            <MultichainNFTCard
-              key={tokenId.toString()}
-              tokenId={tokenId}
-              chain={selectedChain}
-              smartAccountAddress={smartAccount?.address}
-              onTransactionConfirmed={() =>
-                handleTransactionConfirmed(tokenId.toString(), selectedChain.name || "Unknown Chain")
-              }
-            />
-          ))}
+        {/* NFT Cards Grid - Filtered by selected chain */}
+        <div className="mb-8">
+          <h3 className="text-lg font-semibold text-white mb-4">
+            NFTs on {selectedChain.name}
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {tokenIds.map((tokenId) => (
+              <MultichainNFTCard
+                key={`${selectedChain.id}-${tokenId.toString()}`}
+                tokenId={tokenId}
+                chain={selectedChain}
+                smartAccountAddress={smartAccount?.address}
+                onTransactionConfirmed={() =>
+                  handleTransactionConfirmed(tokenId.toString(), selectedChain.name || "Unknown Chain")
+                }
+              />
+            ))}
+          </div>
         </div>
 
         {/* Transaction History */}
@@ -164,17 +169,39 @@ const MultichainNFTCard: React.FC<{
     client,
   });
 
-  const { data: nft } = useReadContract(getNFT, {
+  const { data: nft, isLoading: nftLoading } = useReadContract(getNFT, {
     contract,
     tokenId,
+    queryOptions: {
+      retry: 2,
+    },
   });
 
-  const { data: nftBalance } = useReadContract(balanceOf, {
+  const { data: nftBalance, isLoading: balanceLoading } = useReadContract(balanceOf, {
     contract,
     owner: smartAccountAddress!,
     tokenId,
-    queryOptions: { enabled: !!smartAccountAddress },
+    queryOptions: { 
+      enabled: !!smartAccountAddress,
+      retry: 2,
+    },
   });
+
+  if (nftLoading) {
+    return (
+      <div className="group relative h-full bg-gradient-to-br from-purple-500/20 to-purple-600/10 border border-purple-500/30 rounded-2xl p-6 overflow-hidden animate-pulse">
+        <div className="relative z-10 flex flex-col h-full gap-4">
+          <div className="flex items-center justify-between">
+            <div className="w-20 h-6 bg-purple-500/20 rounded-full"></div>
+            <div className="w-12 h-4 bg-purple-500/20 rounded"></div>
+          </div>
+          <div className="w-full h-40 bg-purple-500/20 rounded-lg"></div>
+          <div className="w-3/4 h-6 bg-purple-500/20 rounded"></div>
+          <div className="w-full h-12 bg-purple-500/20 rounded-lg mt-auto"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="group relative h-full bg-gradient-to-br from-purple-500/20 to-purple-600/10 border border-purple-500/30 hover:border-purple-400/50 rounded-2xl p-6 transition-all duration-300 cursor-pointer overflow-hidden">
@@ -211,10 +238,10 @@ const MultichainNFTCard: React.FC<{
             {smartAccountAddress ? (
               <>
                 <p className="text-sm mt-4 text-purple-300 font-semibold">
-                  You own: {nftBalance?.toString() || "0"} on {chain.name}
+                  You own: {balanceLoading ? "..." : nftBalance?.toString() || "0"} on {chain.name}
                 </p>
                 <TransactionButton
-                  className="mt-4 w-full px-4 py-3 bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white font-bold rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/50"
+                  className="mt-4 w-full px-4 py-3 bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white font-bold rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/50 disabled:opacity-50"
                   transaction={() =>
                     claimTo({
                       contract,
@@ -239,7 +266,9 @@ const MultichainNFTCard: React.FC<{
             )}
           </>
         ) : (
-          <p className="text-slate-400">Loading...</p>
+          <div className="flex items-center justify-center h-full">
+            <p className="text-slate-400">Unable to load NFT</p>
+          </div>
         )}
       </div>
     </div>
