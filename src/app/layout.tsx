@@ -65,6 +65,7 @@ function Header() {
             <MenuItem title="Session keys" href="/session-keys" />
             <MenuItem title="Multichain" href="/multichain" />
             <MenuItem title="Batching" href="/batching" />
+            <MenuItem title="Settings" href="/settings" />
           </nav>
         </div>
       </div>
