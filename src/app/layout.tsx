@@ -63,6 +63,7 @@ function Header() {
           <nav className="hidden md:flex items-center space-x-12">
             <MenuItem title="Sponsored" href="/gasless" />
             <MenuItem title="Session keys" href="/session-keys" />
+            <MenuItem title="Multichain" href="/multichain" />
             <MenuItem title="Batching" href="/batching" />
           </nav>
         </div>

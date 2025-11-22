@@ -1,5 +1,5 @@
 import { createThirdwebClient, getContract } from "thirdweb";
-import { sepolia } from "thirdweb/chains";
+import { sepolia, arbitrumSepolia } from "thirdweb/chains";
 import { SmartWalletOptions } from "thirdweb/wallets";
 
 // Replace this with your client ID string
@@ -30,6 +30,9 @@ export const tokenDropContract = getContract({
 	chain,
 	client,
 });
+
+// Multichain configuration
+export const supportedChains = [sepolia, arbitrumSepolia];
 
 export const accountAbstraction: SmartWalletOptions = {
 	chain,
