@@ -93,7 +93,7 @@ function Footer() {
             <Link
               className="text-slate-400 hover:text-indigo-300 transition-colors duration-300 inline-flex items-center space-x-1 group"
               target="_blank"
-              href="https://github.com/Chi290804/account-abstraction"
+              href="https://github.com/aCoderChild/blockchain_project"
             >
               <span>GitHub</span>
               <span className="transform group-hover:translate-x-1 transition-transform">↗</span>
