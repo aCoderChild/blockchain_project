@@ -34,6 +34,36 @@ export const tokenDropContract = getContract({
 // Multichain configuration
 export const supportedChains = [sepolia, arbitrumSepolia];
 
+// ===== CUSTOMIZABLE PARAMETERS =====
+// Batching: Quantities to claim
+export const BATCH_NFT_QUANTITY = 1n;
+export const BATCH_TOKEN_AMOUNT = "0.1"; // in token units
+
+// Gasless/Sponsored: NFT token IDs to display
+export const NFT_TOKEN_IDS = [3n, 4n, 5n, 6n, 7n, 8n, 9n];
+
+// NFT Collection Names (Customize these!)
+export const NFT_COLLECTION_NAMES: { [key: string]: string } = {
+	"3": "🎨 Pixel Dreamers",
+	"4": "🌟 Cosmic Legends",
+	"5": "⚡ Thunder Collective",
+	"6": "🎭 Mystic Souls",
+	"7": "🌸 Digital Garden",
+	"8": "🚀 Future Riders",
+	"9": "💎 Crystal Essence",
+};
+
+// NFT Collection Descriptions
+export const NFT_DESCRIPTIONS: { [key: string]: string } = {
+	"3": "Experience the magic of pixel art with unique digital creatures",
+	"4": "Join an interstellar journey with cosmic-inspired artwork",
+	"5": "Powered by electric energy and dynamic visuals",
+	"6": "Mysterious and theatrical digital performances",
+	"7": "Nature meets technology in this harmonious collection",
+	"8": "Speed and innovation at its finest",
+	"9": "Premium collection with crystalline aesthetics",
+};
+
 export const accountAbstraction: SmartWalletOptions = {
 	chain,
 	sponsorGas: true,

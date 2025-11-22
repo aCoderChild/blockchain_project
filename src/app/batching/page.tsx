@@ -14,6 +14,8 @@ import {
   editionDropContract,
   editionDropTokenId,
   tokenDropContract,
+  BATCH_NFT_QUANTITY,
+  BATCH_TOKEN_AMOUNT,
 } from "../constants";
 import Link from "next/link";
 import { getBalance, claimTo as claimToken } from "thirdweb/extensions/erc20";
@@ -44,11 +46,11 @@ const BatchingHome = () => {
         contract: editionDropContract,
         tokenId: editionDropTokenId,
         to: smartAccount.address,
-        quantity: 1n,
+        quantity: BATCH_NFT_QUANTITY,
       }),
       claimToken({
         contract: tokenDropContract,
-        quantity: "0.1",
+        quantity: BATCH_TOKEN_AMOUNT,
         to: smartAccount.address,
       }),
     ];

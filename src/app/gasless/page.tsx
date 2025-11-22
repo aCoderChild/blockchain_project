@@ -17,11 +17,12 @@ import {
   accountAbstraction,
   client,
   editionDropContract,
+  NFT_TOKEN_IDS,
+  NFT_COLLECTION_NAMES,
+  NFT_DESCRIPTIONS,
 } from "../constants";
 import Link from "next/link";
 import React, { useState } from "react";
-
-const tokenIds = [3n, 4n, 5n, 6n, 7n, 8n, 9n];
 
 const GaslessHome: React.FC = () => {
   const smartAccount = useActiveAccount();
@@ -66,7 +67,7 @@ const GaslessHome: React.FC = () => {
 
         {/* NFT Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-          {tokenIds.map((tokenId) => (
+          {NFT_TOKEN_IDS.map((tokenId) => (
             <NFTCard
               key={tokenId.toString()}
               tokenId={tokenId}
@@ -148,6 +149,9 @@ const NFTCard: React.FC<{
     queryOptions: { enabled: !!smartAccountAddress },
   });
 
+  const collectionName = NFT_COLLECTION_NAMES[tokenId.toString()] || `NFT #${tokenId}`;
+  const collectionDesc = NFT_DESCRIPTIONS[tokenId.toString()] || "Unique digital collection";
+
   return (
     <div className="group relative h-full bg-gradient-to-br from-indigo-500/20 to-indigo-600/10 border border-indigo-500/30 hover:border-indigo-400/50 rounded-2xl p-6 transition-all duration-300 cursor-pointer overflow-hidden">
       {/* Glow effect */}
@@ -167,10 +171,10 @@ const NFTCard: React.FC<{
               }}
             />
             <h3 className="text-xl font-extrabold text-white group-hover:text-indigo-300 transition-colors">
-              {nft.metadata.name}
+              {collectionName}
             </h3>
             <p className="text-sm text-slate-300 mt-2 flex-grow">
-              {nft.metadata.description}
+              {collectionDesc}
             </p>
 
             {smartAccountAddress ? (
