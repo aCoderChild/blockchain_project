@@ -40,8 +40,8 @@ export default function Home() {
                 </p>
               </div>
 
-              {/* Feature Cards */}
-              <div className="grid md:grid-cols-3 gap-8 w-full max-w-6xl mx-auto px-4">
+              {/* Features Grid */}
+              <div className="grid md:grid-cols-3 gap-8 w-full max-w-6xl mx-auto px-4 mb-8">
                 <FeatureCard
                   title="Sponsored Transactions"
                   description="Enable gas-free transactions for users, reducing barriers to Web3 adoption and improving user experience."
@@ -57,32 +57,30 @@ export default function Home() {
                   color="purple"
                 />
                 <FeatureCard
-                  title="Batching Transactions"
-                  description="Execute multiple transactions in one, optimizing costs and efficiency for complex operations."
-                  href="/batching"
-                  icon="📦"
+                  title="NFT Gallery"
+                  description="Browse, preview, and manage all available NFT collections with detailed metadata and ownership tracking."
+                  href="/multichain"
+                  icon="🎨"
                   color="pink"
                 />
               </div>
 
-              {/* Settings Card */}
-              <div className="mt-12 w-full max-w-6xl mx-auto px-4">
-                <Link href="/settings">
-                  <div className="group relative bg-gradient-to-br from-amber-500/20 to-orange-600/10 border border-amber-500/30 hover:border-amber-400/50 rounded-2xl p-8 transition-all duration-300 cursor-pointer overflow-hidden">
-                    <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-500 to-orange-600 rounded-2xl opacity-0 group-hover:opacity-10 blur transition-all duration-300 -z-10"></div>
-                    <div className="relative z-10 flex items-center justify-between">
-                      <div>
-                        <h3 className="text-2xl font-bold text-white group-hover:text-amber-300 transition-colors mb-2">
-                          ⚙️ Customize Settings
-                        </h3>
-                        <p className="text-slate-300">
-                          Adjust NFT quantities, token amounts, and collection names directly from the UI
-                        </p>
-                      </div>
-                      <span className="text-5xl">→</span>
-                    </div>
-                  </div>
-                </Link>
+              {/* Additional Features Grid */}
+              <div className="grid md:grid-cols-2 gap-8 w-full max-w-4xl mx-auto px-4">
+                <FeatureCard
+                  title="Transaction History"
+                  description="Track all your NFT transactions, minting activities, and claims with complete timestamps and status."
+                  href="/history"
+                  icon="📜"
+                  color="indigo"
+                />
+                <FeatureCard
+                  title="NFT Marketplace"
+                  description="Browse, search, and purchase exclusive NFTs from various collections with zero gas fees."
+                  href="/marketplace"
+                  icon="🛒"
+                  color="pink"
+                />
               </div>
             </div>
           </div>

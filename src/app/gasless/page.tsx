@@ -23,10 +23,12 @@ import {
 } from "../constants";
 import Link from "next/link";
 import React, { useState } from "react";
+import { saveTransaction, createTransactionRecord } from "../utils/transactionHistory";
 
 const GaslessHome: React.FC = () => {
   const smartAccount = useActiveAccount();
   const [transactions, setTransactions] = useState<any[]>([]);
+  const [selectedTokenId, setSelectedTokenId] = useState<bigint>(3n);
 
   const handleTransactionConfirmed = (tokenId: string, chainName: string) => {
     const newTransaction = {
@@ -43,18 +45,18 @@ const GaslessHome: React.FC = () => {
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800">
       {/* Header */}
       <div className="bg-gradient-to-r from-slate-800/80 to-slate-700/80 backdrop-blur-md border-b border-slate-700/50 p-6">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           <h1 className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-indigo-300 via-purple-300 to-pink-300 bg-clip-text text-transparent mb-2">
             Sponsored Transactions
           </h1>
           <p className="text-slate-300 text-lg">
-            Claim NFTs with gas-free transactions powered by account abstraction
+            Experience gas-free NFT claiming powered by account abstraction
           </p>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="flex-grow max-w-6xl mx-auto w-full px-4 py-12">
+      <div className="flex-grow max-w-7xl mx-auto w-full px-4 py-12">
         {/* Connect Button */}
         <div className="flex justify-center mb-12">
           <ConnectButton
@@ -65,21 +67,67 @@ const GaslessHome: React.FC = () => {
           />
         </div>
 
-        {/* NFT Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-          {NFT_TOKEN_IDS.map((tokenId) => (
-            <NFTCard
-              key={tokenId.toString()}
-              tokenId={tokenId}
+        {/* Hero Section with Benefits */}
+        <div className="grid md:grid-cols-3 gap-6 mb-12">
+          <div className="bg-gradient-to-br from-indigo-500/20 to-indigo-600/10 border border-indigo-500/30 rounded-2xl p-8">
+            <div className="text-4xl mb-4">⚡</div>
+            <h3 className="text-xl font-bold text-white mb-2">Zero Gas Fees</h3>
+            <p className="text-slate-300 text-sm">
+              Pay zero gas fees on all your NFT transactions. The sponsorship covers everything.
+            </p>
+          </div>
+
+          <div className="bg-gradient-to-br from-purple-500/20 to-purple-600/10 border border-purple-500/30 rounded-2xl p-8">
+            <div className="text-4xl mb-4">🔐</div>
+            <h3 className="text-xl font-bold text-white mb-2">Account Abstraction</h3>
+            <p className="text-slate-300 text-sm">
+              Smart wallet technology that abstracts away complexity and improves security.
+            </p>
+          </div>
+
+          <div className="bg-gradient-to-br from-pink-500/20 to-pink-600/10 border border-pink-500/30 rounded-2xl p-8">
+            <div className="text-4xl mb-4">✨</div>
+            <h3 className="text-xl font-bold text-white mb-2">Seamless Experience</h3>
+            <p className="text-slate-300 text-sm">
+              One-click NFT claiming with no wallets, no approvals, no complications.
+            </p>
+          </div>
+        </div>
+
+        {/* Quick Claim Section */}
+        <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-slate-700/50 rounded-2xl p-8 mb-12">
+          <h2 className="text-2xl font-bold text-white mb-6">Quick Claim</h2>
+          
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* NFT Selection */}
+            <div>
+              <p className="text-slate-300 font-semibold mb-4">Select an NFT:</p>
+              <div className="space-y-3">
+                {NFT_TOKEN_IDS.map((tokenId) => (
+                  <button
+                    key={tokenId.toString()}
+                    onClick={() => setSelectedTokenId(tokenId)}
+                    className={`w-full text-left p-4 rounded-lg border transition-all duration-300 ${
+                      selectedTokenId.toString() === tokenId.toString()
+                        ? "bg-indigo-500/20 border-indigo-400/50"
+                        : "bg-slate-800/30 border-slate-700/50 hover:border-slate-600/50"
+                    }`}
+                  >
+                    <p className="font-semibold text-white">{NFT_COLLECTION_NAMES[tokenId.toString()]}</p>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Selected NFT Details */}
+            <SelectedNFTQuickView
+              tokenId={selectedTokenId}
               smartAccountAddress={smartAccount?.address}
               onTransactionConfirmed={() =>
-                handleTransactionConfirmed(
-                  tokenId.toString(),
-                  "Sepolia"
-                )
+                handleTransactionConfirmed(selectedTokenId.toString(), "Sepolia")
               }
             />
-          ))}
+          </div>
         </div>
 
         {/* Transaction History */}
@@ -114,11 +162,21 @@ const GaslessHome: React.FC = () => {
             </div>
           </div>
         )}
+
+        {/* Info Box */}
+        <div className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 border border-blue-500/30 rounded-lg p-6 mt-12">
+          <p className="text-slate-300 text-sm flex items-start gap-3">
+            <span className="text-blue-400 mt-0.5">ℹ️</span>
+            <span>
+              <strong>How it works:</strong> Select an NFT, click claim, and your transaction is processed instantly with zero gas fees. All sponsored by our account abstraction infrastructure.
+            </span>
+          </p>
+        </div>
       </div>
 
       {/* Footer */}
-      <div className="border-t border-slate-700/50 py-6 px-4">
-        <div className="max-w-6xl mx-auto">
+      <div className="border-t border-slate-700/50 py-6 px-4 mt-12">
+        <div className="max-w-7xl mx-auto">
           <Link
             href="/"
             className="text-slate-400 hover:text-indigo-300 transition-colors inline-flex items-center gap-2 group"
@@ -132,7 +190,7 @@ const GaslessHome: React.FC = () => {
   );
 };
 
-const NFTCard: React.FC<{
+const SelectedNFTQuickView: React.FC<{
   tokenId: bigint;
   smartAccountAddress?: string;
   onTransactionConfirmed?: () => void;
@@ -149,66 +207,67 @@ const NFTCard: React.FC<{
     queryOptions: { enabled: !!smartAccountAddress },
   });
 
-  const collectionName = NFT_COLLECTION_NAMES[tokenId.toString()] || `NFT #${tokenId}`;
-  const collectionDesc = NFT_DESCRIPTIONS[tokenId.toString()] || "Unique digital collection";
+  if (!nft) return null;
 
   return (
-    <div className="group relative h-full bg-gradient-to-br from-indigo-500/20 to-indigo-600/10 border border-indigo-500/30 hover:border-indigo-400/50 rounded-2xl p-6 transition-all duration-300 cursor-pointer overflow-hidden">
-      {/* Glow effect */}
-      <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl opacity-0 group-hover:opacity-10 blur transition-all duration-300 -z-10"></div>
+    <div className="space-y-4">
+      <div className="bg-slate-900/50 rounded-lg overflow-hidden border border-slate-700/50">
+        <MediaRenderer
+          client={client}
+          src={nft.metadata.image}
+          style={{
+            width: "100%",
+            height: "300px",
+            objectFit: "cover",
+          }}
+        />
+      </div>
 
-      <div className="relative z-10 flex flex-col h-full">
-        {nft ? (
-          <>
-            <MediaRenderer
-              client={client}
-              src={nft.metadata.image}
-              style={{
-                width: "100%",
-                borderRadius: "0.75rem",
-                border: "2px solid rgba(99, 102, 241, 0.3)",
-                marginBottom: "1rem",
-              }}
-            />
-            <h3 className="text-xl font-extrabold text-white group-hover:text-indigo-300 transition-colors">
-              {collectionName}
-            </h3>
-            <p className="text-sm text-slate-300 mt-2 flex-grow">
-              {collectionDesc}
-            </p>
+      <div>
+        <h3 className="text-xl font-bold text-white mb-2">{NFT_COLLECTION_NAMES[tokenId.toString()] || nft.metadata.name}</h3>
+        <p className="text-slate-400 text-sm mb-4">{nft.metadata.description}</p>
 
-            {smartAccountAddress ? (
-              <>
-                <p className="text-sm mt-4 text-indigo-300 font-semibold">
-                  You own: {nftBalance?.toString() || "0"}
-                </p>
-                <TransactionButton
-                  className="mt-4 w-full px-4 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-bold rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/50"
-                  transaction={() =>
-                    claimTo({
-                      contract: editionDropContract,
-                      tokenId,
-                      to: smartAccountAddress,
-                      quantity: 1n,
-                    })
-                  }
-                  onError={(error) => alert(`Error: ${error.message}`)}
-                  onTransactionConfirmed={() => {
-                    alert("🎉 Claimed successfully!");
-                    onTransactionConfirmed?.();
-                  }}
-                >
-                  ⚡ Claim NFT
-                </TransactionButton>
-              </>
-            ) : (
-              <p className="text-xs mt-4 text-slate-500 text-center py-4">
-                Connect wallet to claim.
-              </p>
-            )}
-          </>
+        <div className="grid grid-cols-2 gap-4 mb-4">
+          <div className="bg-slate-800/50 rounded-lg p-3">
+            <p className="text-xs text-slate-400 mb-1">Token ID</p>
+            <p className="text-lg font-bold text-cyan-300">#{tokenId.toString()}</p>
+          </div>
+          {smartAccountAddress && (
+            <div className="bg-slate-800/50 rounded-lg p-3">
+              <p className="text-xs text-slate-400 mb-1">You Own</p>
+              <p className="text-lg font-bold text-cyan-300">{nftBalance?.toString() || "0"}</p>
+            </div>
+          )}
+        </div>
+
+        {smartAccountAddress ? (
+          <TransactionButton
+            className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/50"
+            transaction={() =>
+              claimTo({
+                contract: editionDropContract,
+                tokenId,
+                to: smartAccountAddress,
+                quantity: 1n,
+              })
+            }
+            onTransactionConfirmed={(result: any) => {
+              // Save transaction to history
+              const transactionRecord = createTransactionRecord(
+                "claim",
+                [tokenId],
+                result.transactionHash
+              );
+              saveTransaction(transactionRecord);
+              onTransactionConfirmed?.();
+            }}
+          >
+            🚀 Claim NFT (Gas-Free)
+          </TransactionButton>
         ) : (
-          <p className="text-slate-400">Loading...</p>
+          <div className="text-center py-3 text-slate-400 text-sm">
+            Connect wallet to claim
+          </div>
         )}
       </div>
     </div>

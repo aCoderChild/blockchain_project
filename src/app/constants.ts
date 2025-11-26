@@ -31,8 +31,23 @@ export const tokenDropContract = getContract({
 	client,
 });
 
-// Multichain configuration
+// Multichain configuration - Supporting Sepolia and Arbitrum Sepolia
 export const supportedChains = [sepolia, arbitrumSepolia];
+
+// Chains where contracts are currently deployed
+export const deployedChains = [sepolia.id, arbitrumSepolia.id];
+
+// Chain-specific contract addresses
+export const chainContractAddresses: { [key: number]: { edition: string; token: string } } = {
+	[sepolia.id]: {
+		edition: "0xa2c644D07a78aD12A71c75D5185Fc6885D4bBb48",
+		token: "0xB559DbB23fb9c383E759404B70591FD3764Ed63b",
+	},
+	[arbitrumSepolia.id]: {
+		edition: "0xa2c644D07a78aD12A71c75D5185Fc6885D4bBb48",
+		token: "0xB559DbB23fb9c383E759404B70591FD3764Ed63b",
+	},
+};
 
 // ===== CUSTOMIZABLE PARAMETERS =====
 // Batching: Quantities to claim

@@ -1,63 +1,41 @@
 "use client";
-import React, { useState } from "react";
-import {
-  balanceOf,
-  claimTo,
-  getNFT,
-} from "thirdweb/extensions/erc1155";
+import React, { useState, useEffect } from "react";
+import { getNFT, balanceOf, claimTo } from "thirdweb/extensions/erc1155";
 import {
   ConnectButton,
   MediaRenderer,
-  TransactionButton,
   useActiveAccount,
   useReadContract,
-  useActiveWallet,
+  TransactionButton,
 } from "thirdweb/react";
-import { accountAbstraction, client, editionDropAddress, supportedChains } from "../constants";
+import { accountAbstraction, client, editionDropContract, NFT_TOKEN_IDS, NFT_COLLECTION_NAMES } from "../constants";
 import Link from "next/link";
 import { getContract } from "thirdweb";
+import { sepolia } from "thirdweb/chains";
+import { saveTransaction, createTransactionRecord } from "../utils/transactionHistory";
 
-const tokenIds = [3n, 4n, 5n];
-
-const MultichainHome: React.FC = () => {
+const NFTGalleryHome: React.FC = () => {
   const smartAccount = useActiveAccount();
-  const wallet = useActiveWallet();
-  const [selectedChain, setSelectedChain] = useState(supportedChains[0]);
-  const [transactions, setTransactions] = useState<any[]>([]);
+  const [selectedNFT, setSelectedNFT] = useState<bigint | null>(null);
 
-  const currentContract = getContract({
-    address: editionDropAddress,
-    chain: selectedChain,
-    client,
-  });
-
-  const handleTransactionConfirmed = (tokenId: string, chainName: string) => {
-    const newTransaction = {
-      id: Date.now(),
-      tokenId,
-      chainName,
-      timestamp: new Date().toLocaleString(),
-      status: "Confirmed",
-    };
-    setTransactions([newTransaction, ...transactions]);
-  };
+  const contract = editionDropContract;
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800">
       {/* Header */}
       <div className="bg-gradient-to-r from-slate-800/80 to-slate-700/80 backdrop-blur-md border-b border-slate-700/50 p-6">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           <h1 className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-indigo-300 via-purple-300 to-pink-300 bg-clip-text text-transparent mb-2">
-            Multichain NFT Claims
+            NFT Gallery
           </h1>
           <p className="text-slate-300 text-lg">
-            Claim NFTs across multiple blockchains with sponsored transactions
+            Browse and preview all available NFT collections
           </p>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="flex-grow max-w-6xl mx-auto w-full px-4 py-12">
+      <div className="flex-grow max-w-7xl mx-auto w-full px-4 py-12">
         {/* Connect Button */}
         <div className="flex justify-center mb-12">
           <ConnectButton
@@ -67,83 +45,48 @@ const MultichainHome: React.FC = () => {
           />
         </div>
 
-        {/* Chain Selection */}
-        <div className="mb-12">
-          <h2 className="text-xl font-bold text-white mb-4">Select Chain</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {supportedChains.map((chain) => (
-              <button
-                key={chain.id}
-                onClick={() => setSelectedChain(chain)}
-                className={`p-4 rounded-lg font-semibold transition-all duration-300 ${
-                  selectedChain.id === chain.id
-                    ? "bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/50"
-                    : "bg-slate-800/50 text-slate-300 border border-slate-700/50 hover:border-indigo-500/50"
-                }`}
-              >
-                {chain.name}
-              </button>
-            ))}
-          </div>
+        {/* NFT Gallery Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
+          {NFT_TOKEN_IDS.map((tokenId) => (
+            <NFTGalleryCard
+              key={tokenId.toString()}
+              tokenId={tokenId}
+              contract={contract}
+              smartAccountAddress={smartAccount?.address}
+              isSelected={selectedNFT?.toString() === tokenId.toString()}
+              onSelect={() => setSelectedNFT(tokenId)}
+            />
+          ))}
         </div>
 
-        {/* NFT Cards Grid - Filtered by selected chain */}
-        <div className="mb-8">
-          <h3 className="text-lg font-semibold text-white mb-4">
-            NFTs on {selectedChain.name}
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {tokenIds.map((tokenId) => (
-              <MultichainNFTCard
-                key={`${selectedChain.id}-${tokenId.toString()}`}
-                tokenId={tokenId}
-                chain={selectedChain}
-                smartAccountAddress={smartAccount?.address}
-                onTransactionConfirmed={() =>
-                  handleTransactionConfirmed(tokenId.toString(), selectedChain.name || "Unknown Chain")
-                }
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Transaction History */}
-        {transactions.length > 0 && (
-          <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-slate-700/50 rounded-2xl p-8">
-            <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-              <span className="text-2xl">🌐</span> Multichain Transaction History
-            </h2>
-            <div className="space-y-4 max-h-96 overflow-y-auto">
-              {transactions.map((tx) => (
-                <div
-                  key={tx.id}
-                  className="bg-slate-900/50 border border-purple-500/30 rounded-lg p-4 flex justify-between items-center hover:border-purple-400/50 transition-colors"
-                >
-                  <div className="flex-1">
-                    <p className="text-white font-semibold">
-                      NFT Token ID: {tx.tokenId}
-                    </p>
-                    <p className="text-purple-300 text-sm mt-1">
-                      🔗 Chain: {tx.chainName}
-                    </p>
-                    <p className="text-slate-500 text-xs mt-1">{tx.timestamp}</p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="px-3 py-1 bg-green-500/20 border border-green-500/50 rounded-full text-green-300 text-sm font-semibold">
-                      {tx.status}
-                    </span>
-                    <span className="text-2xl">✓</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+        {/* Selected NFT Details Modal */}
+        {selectedNFT && (
+          <SelectedNFTDetails
+            tokenId={selectedNFT}
+            contract={contract}
+            smartAccountAddress={smartAccount?.address}
+            onClose={() => setSelectedNFT(null)}
+          />
         )}
+
+        {/* Gallery Info */}
+        <div className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 border border-blue-500/30 rounded-lg p-6 mt-12">
+          <p className="text-slate-300 text-sm flex items-start gap-3">
+            <span className="text-blue-400 mt-0.5">ℹ️</span>
+            <span>
+              <strong>NFT Gallery:</strong> Browse all available NFT collections on Sepolia. Click on any NFT to view details, check ownership, and prepare for minting.
+              <br className="mt-2 block" />
+              <span className="text-xs text-slate-400">
+                💡 Use the "Batch Minting" feature to mint multiple NFTs at once with custom quantities.
+              </span>
+            </span>
+          </p>
+        </div>
       </div>
 
       {/* Footer */}
-      <div className="border-t border-slate-700/50 py-6 px-4">
-        <div className="max-w-6xl mx-auto">
+      <div className="border-t border-slate-700/50 py-6 px-4 mt-12">
+        <div className="max-w-7xl mx-auto">
           <Link
             href="/"
             className="text-slate-400 hover:text-indigo-300 transition-colors inline-flex items-center gap-2 group"
@@ -157,117 +100,94 @@ const MultichainHome: React.FC = () => {
   );
 };
 
-const MultichainNFTCard: React.FC<{
+const NFTGalleryCard: React.FC<{
   tokenId: bigint;
-  chain: any;
+  contract: any;
   smartAccountAddress?: string;
-  onTransactionConfirmed?: () => void;
-}> = ({ tokenId, chain, smartAccountAddress, onTransactionConfirmed }) => {
-  const contract = getContract({
-    address: editionDropAddress,
-    chain,
-    client,
-  });
-
+  isSelected: boolean;
+  onSelect: () => void;
+}> = ({ tokenId, contract, smartAccountAddress, isSelected, onSelect }) => {
   const { data: nft, isLoading: nftLoading } = useReadContract(getNFT, {
     contract,
     tokenId,
-    queryOptions: {
-      retry: 2,
-    },
+    queryOptions: { retry: 1 },
   });
 
-  const { data: nftBalance, isLoading: balanceLoading } = useReadContract(balanceOf, {
+  const { data: balance } = useReadContract(balanceOf, {
     contract,
     owner: smartAccountAddress!,
     tokenId,
-    queryOptions: { 
-      enabled: !!smartAccountAddress,
-      retry: 2,
-    },
+    queryOptions: { enabled: !!smartAccountAddress, retry: 2 },
   });
 
   if (nftLoading) {
     return (
-      <div className="group relative h-full bg-gradient-to-br from-purple-500/20 to-purple-600/10 border border-purple-500/30 rounded-2xl p-6 overflow-hidden animate-pulse">
-        <div className="relative z-10 flex flex-col h-full gap-4">
-          <div className="flex items-center justify-between">
-            <div className="w-20 h-6 bg-purple-500/20 rounded-full"></div>
-            <div className="w-12 h-4 bg-purple-500/20 rounded"></div>
-          </div>
-          <div className="w-full h-40 bg-purple-500/20 rounded-lg"></div>
-          <div className="w-3/4 h-6 bg-purple-500/20 rounded"></div>
-          <div className="w-full h-12 bg-purple-500/20 rounded-lg mt-auto"></div>
-        </div>
+      <div className="group relative bg-gradient-to-br from-purple-500/20 to-purple-600/10 border border-purple-500/30 rounded-xl p-4 overflow-hidden animate-pulse">
+        <div className="w-full h-48 bg-purple-500/20 rounded-lg mb-4"></div>
+        <div className="w-3/4 h-4 bg-purple-500/20 rounded mb-2"></div>
+        <div className="w-1/2 h-3 bg-purple-500/20 rounded"></div>
+      </div>
+    );
+  }
+
+  if (!nft) {
+    return (
+      <div className="bg-slate-800/30 border border-slate-700/50 rounded-xl p-4 text-center">
+        <p className="text-slate-400 text-sm">Unable to load NFT</p>
       </div>
     );
   }
 
   return (
-    <div className="group relative h-full bg-gradient-to-br from-purple-500/20 to-purple-600/10 border border-purple-500/30 hover:border-purple-400/50 rounded-2xl p-6 transition-all duration-300 cursor-pointer overflow-hidden">
-      {/* Glow effect */}
-      <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500 to-pink-600 rounded-2xl opacity-0 group-hover:opacity-10 blur transition-all duration-300 -z-10"></div>
+    <div
+      onClick={onSelect}
+      className={`group relative cursor-pointer transition-all duration-300 rounded-xl overflow-hidden ${
+        isSelected
+          ? "ring-2 ring-cyan-400 shadow-lg shadow-cyan-500/50"
+          : "border border-purple-500/30 hover:border-purple-400/50"
+      }`}
+    >
+      <div className={`bg-gradient-to-br ${isSelected ? "from-cyan-500/20 to-blue-600/10" : "from-purple-500/20 to-purple-600/10"} p-4 h-full`}>
+        {/* NFT Image */}
+        <div className="relative mb-4 rounded-lg overflow-hidden bg-slate-900/50">
+          <MediaRenderer
+            client={client}
+            src={nft.metadata.image}
+            style={{
+              width: "100%",
+              height: "160px",
+              objectFit: "cover",
+              borderRadius: "0.5rem",
+            }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-2">
+            <span className="text-xs font-semibold text-cyan-300 bg-slate-900/80 px-2 py-1 rounded">
+              Click to view
+            </span>
+          </div>
+        </div>
 
-      <div className="relative z-10 flex flex-col h-full">
-        {nft ? (
-          <>
-            <div className="mb-4 flex items-center justify-between">
-              <span className="text-xs font-semibold px-3 py-1 bg-purple-500/20 border border-purple-500/50 rounded-full text-purple-300">
-                {chain.name}
-              </span>
-              <span className="text-sm text-slate-400">#{tokenId.toString()}</span>
-            </div>
+        {/* NFT Name */}
+        <h3 className={`text-sm font-bold truncate mb-2 ${isSelected ? "text-cyan-300" : "text-white"}`}>
+          {NFT_COLLECTION_NAMES[tokenId.toString()] || nft.metadata.name}
+        </h3>
 
-            <MediaRenderer
-              client={client}
-              src={nft.metadata.image}
-              style={{
-                width: "100%",
-                borderRadius: "0.75rem",
-                border: "2px solid rgba(168, 85, 247, 0.3)",
-                marginBottom: "1rem",
-              }}
-            />
-            <h3 className="text-xl font-extrabold text-white group-hover:text-purple-300 transition-colors">
-              {nft.metadata.name}
-            </h3>
-            <p className="text-sm text-slate-300 mt-2 flex-grow">
-              {nft.metadata.description}
+        {/* Token ID & Balance */}
+        <div className="space-y-1">
+          <p className="text-xs text-slate-400">
+            ID: <span className="text-slate-300 font-mono">#{tokenId.toString()}</span>
+          </p>
+          {smartAccountAddress && (
+            <p className="text-xs text-slate-400">
+              You own: <span className="text-slate-300 font-semibold">{balance?.toString() || "0"}</span>
             </p>
+          )}
+        </div>
 
-            {smartAccountAddress ? (
-              <>
-                <p className="text-sm mt-4 text-purple-300 font-semibold">
-                  You own: {balanceLoading ? "..." : nftBalance?.toString() || "0"} on {chain.name}
-                </p>
-                <TransactionButton
-                  className="mt-4 w-full px-4 py-3 bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white font-bold rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/50 disabled:opacity-50"
-                  transaction={() =>
-                    claimTo({
-                      contract,
-                      tokenId,
-                      to: smartAccountAddress,
-                      quantity: 1n,
-                    })
-                  }
-                  onError={(error) => alert(`Error: ${error.message}`)}
-                  onTransactionConfirmed={() => {
-                    alert(`🎉 Claimed on ${chain.name}!`);
-                    onTransactionConfirmed?.();
-                  }}
-                >
-                  🌐 Claim on {chain.name}
-                </TransactionButton>
-              </>
-            ) : (
-              <p className="text-xs mt-4 text-slate-500 text-center py-4">
-                Connect wallet to claim.
-              </p>
-            )}
-          </>
-        ) : (
-          <div className="flex items-center justify-center h-full">
-            <p className="text-slate-400">Unable to load NFT</p>
+        {/* Selection Badge */}
+        {isSelected && (
+          <div className="absolute top-2 right-2 bg-cyan-500/20 border border-cyan-400/50 rounded-full p-2">
+            <span className="text-cyan-300 text-lg">✓</span>
           </div>
         )}
       </div>
@@ -275,4 +195,144 @@ const MultichainNFTCard: React.FC<{
   );
 };
 
-export default MultichainHome;
+const SelectedNFTDetails: React.FC<{
+  tokenId: bigint;
+  contract: any;
+  smartAccountAddress?: string;
+  onClose: () => void;
+}> = ({ tokenId, contract, smartAccountAddress, onClose }) => {
+  const { data: nft, isLoading, refetch: refetchNFT } = useReadContract(getNFT, {
+    contract,
+    tokenId,
+    queryOptions: { retry: 1 },
+  });
+
+  const { data: balance, refetch: refetchBalance } = useReadContract(balanceOf, {
+    contract,
+    owner: smartAccountAddress!,
+    tokenId,
+    queryOptions: { enabled: !!smartAccountAddress, retry: 2 },
+  });
+
+  const smartAccount = useActiveAccount();
+
+  if (isLoading || !nft) return null;
+
+  const handleMintSuccess = () => {
+    refetchNFT();
+    refetchBalance();
+    // Save transaction to history
+    const transactionRecord = createTransactionRecord(
+      "mint",
+      [tokenId],
+      "0x" + Math.random().toString(16).slice(2)
+    );
+    saveTransaction(transactionRecord);
+    alert("🎉 NFT minted successfully!");
+    onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div className="bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700/50 rounded-2xl max-w-2xl w-full p-8 shadow-2xl">
+        {/* Close Button */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors text-2xl"
+        >
+          ✕
+        </button>
+
+        <div className="grid md:grid-cols-2 gap-8">
+          {/* NFT Image */}
+          <div className="flex flex-col gap-4">
+            <MediaRenderer
+              client={client}
+              src={nft.metadata.image}
+              style={{
+                width: "100%",
+                borderRadius: "1rem",
+                border: "2px solid rgba(168, 85, 247, 0.3)",
+              }}
+            />
+            <div className="bg-slate-800/50 border border-slate-700/50 rounded-lg p-4">
+              <p className="text-xs text-slate-400 mb-2">Token ID</p>
+              <p className="text-lg font-mono font-bold text-cyan-300">#{tokenId.toString()}</p>
+            </div>
+          </div>
+
+          {/* NFT Details */}
+          <div className="space-y-6">
+            <div>
+              <h2 className="text-3xl font-bold text-white mb-2">{NFT_COLLECTION_NAMES[tokenId.toString()] || nft.metadata.name}</h2>
+              <p className="text-slate-400 text-sm">{nft.metadata.description}</p>
+            </div>
+
+            {/* Ownership Info */}
+            {smartAccountAddress && (
+              <div className="bg-gradient-to-br from-cyan-500/10 to-blue-500/10 border border-cyan-500/30 rounded-lg p-4">
+                <p className="text-sm text-slate-400 mb-2">Your Collection</p>
+                <p className="text-2xl font-bold text-cyan-300">{balance?.toString() || "0"} Owned</p>
+              </div>
+            )}
+
+            {/* Collection Stats */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-slate-800/50 border border-slate-700/50 rounded-lg p-4">
+                <p className="text-xs text-slate-400 mb-2">Chain</p>
+                <p className="text-white font-semibold">Sepolia</p>
+              </div>
+              <div className="bg-slate-800/50 border border-slate-700/50 rounded-lg p-4">
+                <p className="text-xs text-slate-400 mb-2">Type</p>
+                <p className="text-white font-semibold">ERC1155</p>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="space-y-3">
+              {smartAccount ? (
+                <>
+                  <TransactionButton
+                    transaction={() =>
+                      claimTo({
+                        contract: editionDropContract,
+                        tokenId: tokenId,
+                        to: smartAccount.address,
+                        quantity: 1n,
+                      })
+                    }
+                    onTransactionConfirmed={(result: any) => {
+                      // Save transaction to history with actual hash
+                      const transactionRecord = createTransactionRecord(
+                        "mint",
+                        [tokenId],
+                        result.transactionHash
+                      );
+                      saveTransaction(transactionRecord);
+                      handleMintSuccess();
+                    }}
+                    className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/50"
+                  >
+                    🚀 Mint This NFT
+                  </TransactionButton>
+                  <Link
+                    href="/batching"
+                    className="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-amber-500/50 text-center block"
+                  >
+                    📦 Batch Mint Multiple
+                  </Link>
+                </>
+              ) : (
+                <div className="w-full bg-slate-700/50 text-slate-400 font-bold py-3 px-6 rounded-lg text-center">
+                  Connect wallet to mint
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default NFTGalleryHome;
