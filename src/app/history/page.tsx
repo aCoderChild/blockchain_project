@@ -95,15 +95,15 @@ const HistoryPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-cyan-950">
       {/* Header */}
-      <div className="bg-gradient-to-r from-slate-800/80 to-slate-700/80 backdrop-blur-md border-b border-slate-700/50 p-6">
+      <div className="bg-gradient-to-r from-slate-900/90 to-cyan-900/40 backdrop-blur-xl border-b-2 border-cyan-500/30 p-8 shadow-xl">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-indigo-300 via-purple-300 to-pink-300 bg-clip-text text-transparent mb-2">
-            Transaction History
+          <h1 className="text-5xl md:text-6xl font-black bg-gradient-to-r from-teal-300 via-emerald-300 to-cyan-300 bg-clip-text text-transparent mb-3">
+            Activity Timeline
           </h1>
-          <p className="text-slate-300 text-lg">
-            Track all your NFT transactions and activities
+          <p className="text-slate-300 text-xl">
+            Real-time tracking of all your blockchain transactions
           </p>
         </div>
       </div>
@@ -122,16 +122,16 @@ const HistoryPage: React.FC = () => {
 
         {/* Filter Buttons */}
         {transactions.length > 0 && (
-          <div className="mb-8 flex flex-wrap gap-3 justify-between items-center">
+          <div className="mb-10 flex flex-wrap gap-4 justify-between items-center">
             <div className="flex flex-wrap gap-3">
               {(["all", "mint", "claim", "transfer", "batch", "unknown"] as const).map((f) => (
                 <button
                   key={f}
                   onClick={() => setFilter(f)}
-                  className={`px-6 py-2 rounded-lg font-semibold transition-all duration-300 ${
+                  className={`px-7 py-3 rounded-xl font-bold transition-all duration-300 border-2 ${
                     filter === f
-                      ? "bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/50"
-                      : "bg-slate-800/50 border border-slate-700/50 text-slate-300 hover:border-slate-600/50"
+                      ? "bg-gradient-to-r from-teal-500 to-emerald-600 text-white shadow-xl shadow-teal-500/50 border-teal-400"
+                      : "bg-slate-800/50 border-slate-700/60 text-slate-300 hover:border-teal-500/50 hover:text-teal-200"
                   }`}
                 >
                   {f.charAt(0).toUpperCase() + f.slice(1)}
@@ -143,11 +143,11 @@ const HistoryPage: React.FC = () => {
 
         {/* Transactions List */}
         {filteredTransactions.length > 0 ? (
-          <div className="space-y-4">
+          <div className="space-y-5">
             {filteredTransactions.map((tx) => (
               <div
                 key={tx.id}
-                className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-slate-700/50 rounded-xl p-6 hover:border-slate-600/50 transition-all duration-300"
+                className="group bg-gradient-to-br from-slate-900/60 to-teal-900/20 border-2 border-teal-500/30 rounded-2xl p-8 hover:border-teal-400/70 transition-all duration-300 hover:shadow-2xl hover:shadow-teal-500/20 hover:-translate-y-2"
               >
                 <div className="flex items-start justify-between gap-4">
                   {/* Left Side - Type Icon and Details */}
@@ -167,7 +167,7 @@ const HistoryPage: React.FC = () => {
                       {tx.collectionNames.map((name, idx) => (
                         <span
                           key={idx}
-                          className="px-3 py-1 bg-indigo-500/20 border border-indigo-500/50 rounded-full text-indigo-300 text-xs font-semibold"
+                          className="px-4 py-2 bg-gradient-to-r from-teal-500/20 to-emerald-500/20 border-2 border-teal-400/50 rounded-full text-teal-200 text-xs font-bold shadow-lg"
                         >
                           {name}
                         </span>
@@ -175,22 +175,22 @@ const HistoryPage: React.FC = () => {
                     </div>
 
                     {/* Transaction Details */}
-                    <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
-                      <div className="bg-slate-900/50 rounded-lg p-3">
-                        <p className="text-xs text-slate-400 mb-1">Quantity</p>
-                        <p className="text-lg font-bold text-white">{tx.quantity}</p>
+                    <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <div className="bg-gradient-to-br from-teal-500/10 to-teal-600/5 rounded-xl p-4 border-2 border-teal-500/30 group-hover:border-teal-400/60 transition-colors">
+                        <p className="text-xs text-slate-400 mb-2 font-bold">Quantity</p>
+                        <p className="text-2xl font-black text-teal-300">{tx.quantity}</p>
                       </div>
-                      <div className="bg-slate-900/50 rounded-lg p-3">
-                        <p className="text-xs text-slate-400 mb-1">Items</p>
-                        <p className="text-lg font-bold text-white">{tx.tokenIds.length}</p>
+                      <div className="bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 rounded-xl p-4 border-2 border-emerald-500/30 group-hover:border-emerald-400/60 transition-colors">
+                        <p className="text-xs text-slate-400 mb-2 font-bold">Items</p>
+                        <p className="text-2xl font-black text-emerald-300">{tx.tokenIds.length}</p>
                       </div>
-                      <div className="bg-slate-900/50 rounded-lg p-3">
-                        <p className="text-xs text-slate-400 mb-1">Type</p>
-                        <p className="text-lg font-bold text-white capitalize">{tx.type}</p>
+                      <div className="bg-gradient-to-br from-cyan-500/10 to-cyan-600/5 rounded-xl p-4 border-2 border-cyan-500/30 group-hover:border-cyan-400/60 transition-colors">
+                        <p className="text-xs text-slate-400 mb-2 font-bold">Type</p>
+                        <p className="text-lg font-black text-cyan-300 capitalize">{tx.type}</p>
                       </div>
-                      <div className="bg-slate-900/50 rounded-lg p-3">
-                        <p className="text-xs text-slate-400 mb-1">Hash</p>
-                        <p className="text-xs font-mono text-cyan-300 truncate">{tx.hash.slice(0, 10)}...</p>
+                      <div className="bg-gradient-to-br from-teal-500/10 to-emerald-600/5 rounded-xl p-4 border-2 border-teal-500/30 group-hover:border-teal-400/60 transition-colors">
+                        <p className="text-xs text-slate-400 mb-2 font-bold">Hash</p>
+                        <p className="text-xs font-mono text-emerald-300 truncate font-bold">{tx.hash.slice(0, 10)}...</p>
                       </div>
                     </div>
                   </div>

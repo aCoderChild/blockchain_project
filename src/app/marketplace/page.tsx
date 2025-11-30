@@ -71,15 +71,15 @@ const MarketplacePage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-950">
       {/* Header */}
-      <div className="bg-gradient-to-r from-slate-800/80 to-slate-700/80 backdrop-blur-md border-b border-slate-700/50 p-6">
+      <div className="bg-gradient-to-r from-slate-900/90 to-emerald-900/40 backdrop-blur-xl border-b-2 border-emerald-500/30 p-8 shadow-xl">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-indigo-300 via-purple-300 to-pink-300 bg-clip-text text-transparent mb-2">
+          <h1 className="text-5xl md:text-6xl font-black bg-gradient-to-r from-teal-300 via-emerald-300 to-cyan-300 bg-clip-text text-transparent mb-3">
             NFT Marketplace
           </h1>
-          <p className="text-slate-300 text-lg">
-            Browse, buy, and trade exclusive NFTs
+          <p className="text-slate-300 text-xl">
+            Discover, trade, and collect exclusive digital assets
           </p>
         </div>
       </div>
@@ -202,24 +202,32 @@ const MarketplacePage: React.FC = () => {
         </div>
 
         {/* Marketplace Stats */}
-        <div className="grid md:grid-cols-4 gap-6 mt-12 mb-12">
-          <div className="bg-gradient-to-br from-indigo-500/20 to-indigo-600/10 border border-indigo-500/30 rounded-xl p-6">
-            <p className="text-slate-400 text-sm mb-2">Active Listings</p>
-            <p className="text-3xl font-bold text-indigo-300">{listings.length}</p>
+        <div className="grid md:grid-cols-4 gap-5 mt-12 mb-12">
+          <div className="group bg-gradient-to-br from-teal-500/15 to-teal-600/5 border-2 border-teal-500/40 rounded-2xl p-8 hover:shadow-2xl hover:shadow-teal-500/30 transition-all duration-300 hover:-translate-y-2 hover:border-teal-400/70">
+            <p className="text-slate-400 text-sm mb-3 font-bold flex items-center gap-2">
+              <span className="text-xl">📊</span> Active Listings
+            </p>
+            <p className="text-5xl font-black text-teal-300 group-hover:scale-110 transition-transform duration-300">{listings.length}</p>
           </div>
-          <div className="bg-gradient-to-br from-purple-500/20 to-purple-600/10 border border-purple-500/30 rounded-xl p-6">
-            <p className="text-slate-400 text-sm mb-2">My Listings</p>
-            <p className="text-3xl font-bold text-purple-300">{myListings.length}</p>
+          <div className="group bg-gradient-to-br from-emerald-500/15 to-emerald-600/5 border-2 border-emerald-500/40 rounded-2xl p-8 hover:shadow-2xl hover:shadow-emerald-500/30 transition-all duration-300 hover:-translate-y-2 hover:border-emerald-400/70">
+            <p className="text-slate-400 text-sm mb-3 font-bold flex items-center gap-2">
+              <span className="text-xl">📋</span> My Listings
+            </p>
+            <p className="text-5xl font-black text-emerald-300 group-hover:scale-110 transition-transform duration-300">{myListings.length}</p>
           </div>
-          <div className="bg-gradient-to-br from-pink-500/20 to-pink-600/10 border border-pink-500/30 rounded-xl p-6">
-            <p className="text-slate-400 text-sm mb-2">Floor Price</p>
-            <p className="text-3xl font-bold text-pink-300">
+          <div className="group bg-gradient-to-br from-cyan-500/15 to-cyan-600/5 border-2 border-cyan-500/40 rounded-2xl p-8 hover:shadow-2xl hover:shadow-cyan-500/30 transition-all duration-300 hover:-translate-y-2 hover:border-cyan-400/70">
+            <p className="text-slate-400 text-sm mb-3 font-bold flex items-center gap-2">
+              <span className="text-xl">💎</span> Floor Price
+            </p>
+            <p className="text-4xl font-black text-cyan-300 group-hover:scale-110 transition-transform duration-300">
               {listings.length > 0 ? Math.min(...listings.map(l => parseFloat(l.price))).toFixed(2) : "0"} ETH
             </p>
           </div>
-          <div className="bg-gradient-to-br from-cyan-500/20 to-cyan-600/10 border border-cyan-500/30 rounded-xl p-6">
-            <p className="text-slate-400 text-sm mb-2">Total Volume</p>
-            <p className="text-3xl font-bold text-cyan-300">
+          <div className="group bg-gradient-to-br from-teal-500/15 to-emerald-600/5 border-2 border-teal-500/40 rounded-2xl p-8 hover:shadow-2xl hover:shadow-teal-500/30 transition-all duration-300 hover:-translate-y-2 hover:border-teal-400/70">
+            <p className="text-slate-400 text-sm mb-3 font-bold flex items-center gap-2">
+              <span className="text-xl">💰</span> Total Volume
+            </p>
+            <p className="text-4xl font-black text-emerald-300 group-hover:scale-110 transition-transform duration-300">
               {listings.length > 0 ? listings.reduce((sum, l) => sum + parseFloat(l.price), 0).toFixed(2) : "0"} ETH
             </p>
           </div>

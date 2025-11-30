@@ -42,15 +42,15 @@ const GaslessHome: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-teal-950">
       {/* Header */}
-      <div className="bg-gradient-to-r from-slate-800/80 to-slate-700/80 backdrop-blur-md border-b border-slate-700/50 p-6">
+      <div className="bg-gradient-to-r from-slate-900/90 to-teal-900/40 backdrop-blur-xl border-b-2 border-teal-500/30 p-8 shadow-xl">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-indigo-300 via-purple-300 to-pink-300 bg-clip-text text-transparent mb-2">
-            Sponsored Transactions
+          <h1 className="text-5xl md:text-6xl font-black bg-gradient-to-r from-teal-300 via-emerald-300 to-cyan-300 bg-clip-text text-transparent mb-3">
+            Gas-Free Claiming
           </h1>
-          <p className="text-slate-300 text-lg">
-            Experience gas-free NFT claiming powered by account abstraction
+          <p className="text-slate-300 text-xl">
+            Experience zero-cost NFT minting powered by account abstraction
           </p>
         </div>
       </div>
@@ -69,51 +69,56 @@ const GaslessHome: React.FC = () => {
 
         {/* Hero Section with Benefits */}
         <div className="grid md:grid-cols-3 gap-6 mb-12">
-          <div className="bg-gradient-to-br from-indigo-500/20 to-indigo-600/10 border border-indigo-500/30 rounded-2xl p-8">
-            <div className="text-4xl mb-4">⚡</div>
-            <h3 className="text-xl font-bold text-white mb-2">Zero Gas Fees</h3>
-            <p className="text-slate-300 text-sm">
-              Pay zero gas fees on all your NFT transactions. The sponsorship covers everything.
+          <div className="group bg-gradient-to-br from-teal-500/15 to-teal-600/5 border-2 border-teal-500/40 rounded-2xl p-10 hover:shadow-2xl hover:shadow-teal-500/30 transition-all duration-300 hover:-translate-y-2 hover:border-teal-400/70">
+            <div className="text-7xl mb-8 group-hover:scale-110 transition-transform duration-300">⚡</div>
+            <h3 className="text-2xl font-black text-white mb-4">Zero Gas Fees</h3>
+            <p className="text-slate-400 text-base leading-relaxed group-hover:text-slate-300 transition-colors">
+              No transaction costs. Ever. The protocol sponsors all gas fees for a frictionless experience.
             </p>
           </div>
 
-          <div className="bg-gradient-to-br from-purple-500/20 to-purple-600/10 border border-purple-500/30 rounded-2xl p-8">
-            <div className="text-4xl mb-4">🔐</div>
-            <h3 className="text-xl font-bold text-white mb-2">Account Abstraction</h3>
-            <p className="text-slate-300 text-sm">
-              Smart wallet technology that abstracts away complexity and improves security.
+          <div className="group bg-gradient-to-br from-emerald-500/15 to-emerald-600/5 border-2 border-emerald-500/40 rounded-2xl p-10 hover:shadow-2xl hover:shadow-emerald-500/30 transition-all duration-300 hover:-translate-y-2 hover:border-emerald-400/70">
+            <div className="text-7xl mb-8 group-hover:scale-110 transition-transform duration-300">🔐</div>
+            <h3 className="text-2xl font-black text-white mb-4">Smart Accounts</h3>
+            <p className="text-slate-400 text-base leading-relaxed group-hover:text-slate-300 transition-colors">
+              Advanced wallet technology with built-in security and simplified user interactions.
             </p>
           </div>
 
-          <div className="bg-gradient-to-br from-pink-500/20 to-pink-600/10 border border-pink-500/30 rounded-2xl p-8">
-            <div className="text-4xl mb-4">✨</div>
-            <h3 className="text-xl font-bold text-white mb-2">Seamless Experience</h3>
-            <p className="text-slate-300 text-sm">
-              One-click NFT claiming with no wallets, no approvals, no complications.
+          <div className="group bg-gradient-to-br from-cyan-500/15 to-cyan-600/5 border-2 border-cyan-500/40 rounded-2xl p-10 hover:shadow-2xl hover:shadow-cyan-500/30 transition-all duration-300 hover:-translate-y-2 hover:border-cyan-400/70">
+            <div className="text-7xl mb-8 group-hover:scale-110 transition-transform duration-300">✨</div>
+            <h3 className="text-2xl font-black text-white mb-4">Instant Claims</h3>
+            <p className="text-slate-400 text-base leading-relaxed group-hover:text-slate-300 transition-colors">
+              One-click NFT claiming with instant confirmation. No complex wallet management required.
             </p>
           </div>
         </div>
 
         {/* Quick Claim Section */}
-        <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-slate-700/50 rounded-2xl p-8 mb-12">
-          <h2 className="text-2xl font-bold text-white mb-6">Quick Claim</h2>
+        <div className="bg-gradient-to-br from-slate-900/60 to-teal-900/20 border-2 border-teal-500/30 rounded-2xl p-10 mb-12 shadow-2xl">
+          <h2 className="text-3xl font-black text-white mb-8 flex items-center gap-3">
+            <span className="text-4xl">🎯</span> Quick Claim
+          </h2>
           
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid md:grid-cols-2 gap-10">
             {/* NFT Selection */}
             <div>
-              <p className="text-slate-300 font-semibold mb-4">Select an NFT:</p>
+              <p className="text-teal-100 font-black text-xl mb-6 flex items-center gap-3">
+                <span className="text-3xl">🎨</span> Choose Your NFT
+              </p>
               <div className="space-y-3">
                 {NFT_TOKEN_IDS.map((tokenId) => (
                   <button
                     key={tokenId.toString()}
                     onClick={() => setSelectedTokenId(tokenId)}
-                    className={`w-full text-left p-4 rounded-lg border transition-all duration-300 ${
+                    className={`w-full text-left p-5 rounded-xl border-2 transition-all duration-300 ${
                       selectedTokenId.toString() === tokenId.toString()
-                        ? "bg-indigo-500/20 border-indigo-400/50"
-                        : "bg-slate-800/30 border-slate-700/50 hover:border-slate-600/50"
+                        ? "bg-gradient-to-r from-teal-500/25 to-emerald-500/25 border-teal-400/80 shadow-xl shadow-teal-500/40"
+                        : "bg-slate-800/40 border-slate-700/60 hover:border-teal-500/50 hover:bg-slate-800/60"
                     }`}
                   >
-                    <p className="font-semibold text-white">{NFT_COLLECTION_NAMES[tokenId.toString()]}</p>
+                    <p className="font-black text-white text-lg">{NFT_COLLECTION_NAMES[tokenId.toString()]}</p>
+                    <p className="text-slate-400 text-sm mt-1 font-semibold">Token #{tokenId.toString()}</p>
                   </button>
                 ))}
               </div>
