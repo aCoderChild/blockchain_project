@@ -572,18 +572,16 @@ const MarketplaceListingCard: React.FC<{
   });
 
   // Check blockchain listing status if blockchainListingId exists
-  const { data: blockchainListing } = useReadContract(
-    listing.blockchainListingId
-      ? {
-          contract: marketplaceContract,
-          method: "function getListing(uint256 listingId) view returns (address seller, address nftContract, uint256 tokenId, uint256 quantity, uint256 pricePerItem, bool active)",
-          params: [BigInt(listing.blockchainListingId)],
-        }
-      : undefined
-  ) as { data: [string, string, bigint, bigint, bigint, boolean] | undefined };
+  const { data: blockchainListing } = useReadContract({
+    contract: marketplaceContract,
+    method: "function getListing(uint256 listingId) view returns (address seller, address nftContract, uint256 tokenId, uint256 quantity, uint256 pricePerItem, bool active)",
+    params: [BigInt(listing.blockchainListingId || 0)],
+  });
 
   // Log listing data for debugging
   useEffect(() => {
+    if (!listing.blockchainListingId) return;
+    
     console.log("📋 Listing card loaded:", {
       firebaseId: listing.id,
       blockchainListingId: listing.blockchainListingId,
