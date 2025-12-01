@@ -36,7 +36,7 @@ const AddSigner = () => {
     getAllActiveSigners,
     {
       contract: getContract({
-        address: smartAccount?.address!,
+        address: smartAccount?.address || "0x0000000000000000000000000000000000000000",
         chain,
         client,
       }),
