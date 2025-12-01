@@ -571,6 +571,38 @@ const MarketplaceListingCard: React.FC<{
     tokenId: BigInt(listing.tokenId),
   });
 
+  // Check blockchain listing status if blockchainListingId exists
+  const { data: blockchainListing } = useReadContract({
+    contract: marketplaceContract,
+    method: "function getListing(uint256 listingId) view returns (address seller, address nftContract, uint256 tokenId, uint256 quantity, uint256 pricePerItem, bool active)",
+    params: listing.blockchainListingId ? [BigInt(listing.blockchainListingId)] : undefined,
+  });
+
+  // Log listing data for debugging
+  useEffect(() => {
+    console.log("📋 Listing card loaded:", {
+      firebaseId: listing.id,
+      blockchainListingId: listing.blockchainListingId,
+      collectionName: listing.collectionName,
+      price: listing.price,
+      seller: listing.seller,
+      blockchainStatus: blockchainListing ? {
+        active: blockchainListing[5],
+        quantity: blockchainListing[3]?.toString(),
+      } : "Loading...",
+    });
+  }, [listing, blockchainListing]);
+
+  // Automatically update Firebase if blockchain listing is inactive
+  useEffect(() => {
+    if (blockchainListing && !blockchainListing[5] && listing.status === "active") {
+      // blockchainListing[5] is the 'active' boolean
+      console.log(`Listing ${listing.id} is inactive on blockchain, updating Firebase...`);
+      updateListingStatus(listing.id, "sold");
+      onPurchased();
+    }
+  }, [blockchainListing, listing.id, listing.status, onPurchased]);
+
   const handlePurchase = async () => {
     if (!buyerAddress) {
       alert("Please connect your wallet to purchase");
@@ -579,6 +611,14 @@ const MarketplaceListingCard: React.FC<{
 
     if (buyerAddress.toLowerCase() === listing.seller.toLowerCase()) {
       alert("You cannot buy your own listings");
+      return;
+    }
+
+    // Check blockchain listing status first
+    if (blockchainListing && !blockchainListing[5]) {
+      alert("❌ Error: This listing is no longer active on the blockchain (already sold or cancelled)");
+      updateListingStatus(listing.id, "sold");
+      onPurchased();
       return;
     }
 
@@ -624,6 +664,13 @@ const MarketplaceListingCard: React.FC<{
         <h3 className="text-sm font-bold text-white mb-1 truncate">{listing.collectionName}</h3>
         <p className="text-xs text-slate-400 mb-3">Seller: {listing.seller.slice(0, 6)}...{listing.seller.slice(-4)}</p>
 
+        {/* Show warning if blockchain listing is inactive */}
+        {blockchainListing && !blockchainListing[5] && (
+          <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-2 mb-3">
+            <p className="text-xs text-red-300">⚠️ Sold/Inactive on blockchain</p>
+          </div>
+        )}
+
         <div className="mb-4 space-y-2">
           <div className="flex justify-between items-center">
             <span className="text-xs text-slate-400">Price</span>
@@ -651,6 +698,12 @@ const MarketplaceListingCard: React.FC<{
               <TransactionButton
                 transaction={() => {
                   // Purchase through marketplace contract using blockchain listing ID
+                  console.log("🛒 Attempting purchase:", {
+                    listingId: listing.blockchainListingId,
+                    quantity: 1,
+                    price: listing.price,
+                    seller: listing.seller,
+                  });
                   return prepareContractCall({
                     contract: marketplaceContract,
                     method: "function purchase(uint256 listingId, uint256 quantity) payable",
@@ -664,7 +717,11 @@ const MarketplaceListingCard: React.FC<{
                   setIsPurchasing(false);
                 }}
                 onError={(error) => {
-                  console.error("Purchase error:", error);
+                  console.error("❌ Purchase error details:", {
+                    error: error.message,
+                    listingId: listing.blockchainListingId,
+                    blockchainStatus: blockchainListing,
+                  });
                   alert(`❌ Purchase failed: ${error.message}`);
                   setIsPurchasing(false);
                 }}
