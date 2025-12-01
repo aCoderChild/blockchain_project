@@ -87,7 +87,7 @@ const MarketplacePage: React.FC = () => {
 
       {/* Main Content */}
       <div className="flex-grow max-w-7xl mx-auto w-full px-4 py-12">
-        {/* Connect Button */}
+        {/* Optional Connect Button */}
         <div className="flex justify-center mb-12">
           <ConnectButton
             client={client}
@@ -96,6 +96,14 @@ const MarketplacePage: React.FC = () => {
             connectModal={{ size: "compact" }}
           />
         </div>
+        
+        {!smartAccount && (
+          <div className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 border border-blue-500/30 rounded-lg p-6 mb-8 text-center">
+            <p className="text-slate-300">
+              💡 <strong>Browsing as guest:</strong> You can view all listings. Connect your wallet to create listings and make purchases.
+            </p>
+          </div>
+        )}
 
         {/* My Listings Section */}
         {smartAccount && (
@@ -392,18 +400,16 @@ const MarketplaceListingCard: React.FC<{
   });
 
   const handlePurchase = () => {
-    if (!buyerAddress) {
-      alert("Please connect your wallet to purchase");
-      return;
-    }
-
-    if (buyerAddress.toLowerCase() === listing.seller.toLowerCase()) {
+    if (buyerAddress && buyerAddress.toLowerCase() === listing.seller.toLowerCase()) {
       alert("You cannot buy your own listings");
       return;
     }
 
     // In a real app, this would execute a purchase transaction
-    alert(`✅ Purchase successful! You bought 1 ${listing.collectionName} for ${listing.price} ETH`);
+    const message = buyerAddress 
+      ? `✅ Purchase successful! You bought 1 ${listing.collectionName} for ${listing.price} ETH`
+      : `ℹ️ To complete this purchase, please connect your wallet first.`;
+    alert(message);
     onPurchased();
   };
 
