@@ -437,7 +437,7 @@ const BatchMintingHome = () => {
                             value={qty}
                             onChange={(e) => {
                               const newSelections = { ...settings.nftSelections };
-                              newSelections[id] = e.target.value;
+                              newSelections[id as keyof typeof settings.nftSelections] = e.target.value;
                               setSettings({ ...settings, nftSelections: newSelections });
                             }}
                             className="w-16 px-3 py-2 bg-slate-700/50 border border-slate-600/50 rounded text-slate-100 text-sm focus:border-cyan-400 focus:outline-none text-center"
