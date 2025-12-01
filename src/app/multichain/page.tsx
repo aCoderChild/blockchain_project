@@ -77,7 +77,7 @@ const NFTGalleryHome: React.FC = () => {
               <strong>NFT Gallery:</strong> Browse all available NFT collections on Sepolia. Click on any NFT to view details, check ownership, and prepare for minting.
               <br className="mt-2 block" />
               <span className="text-xs text-slate-400">
-                💡 Use the "Batch Minting" feature to mint multiple NFTs at once with custom quantities.
+                💡 Use the &quot;Batch Minting&quot; feature to mint multiple NFTs at once with custom quantities.
               </span>
             </span>
           </p>

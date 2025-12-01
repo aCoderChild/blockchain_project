@@ -224,7 +224,7 @@ const SettingsPage: React.FC = () => {
             <span>ℹ️</span> How It Works
           </h3>
           <ul className="text-slate-300 space-y-2 text-sm">
-            <li>✓ Changes are saved to your browser's local storage</li>
+            <li>✓ Changes are saved to your browser&apos;s local storage</li>
             <li>✓ Your settings persist when you refresh the page</li>
             <li>✓ Customize NFT names with emojis for visual appeal</li>
             <li>✓ Adjust batch quantities to fit your needs</li>

@@ -79,7 +79,7 @@ const AddSigner = () => {
     } finally {
       setGenerating(false);
     }
-  }, [client, smartAccount, chain, editionDropAddress, sendTx, refetch]);
+  }, [smartAccount, sendTx, refetch]);
 
   const mintNFT = useCallback(
     async (targetAddress: string) => {
@@ -97,7 +97,7 @@ const AddSigner = () => {
       await sendTx(transaction);
       alert("NFT minted successfully for: " + targetAddress);
     },
-    [editionDropAddress, chain, client, sendTx],
+    [sendTx],
   );
 
   const revokeSessionKey = useCallback(
@@ -117,7 +117,7 @@ const AddSigner = () => {
       alert("Session key revoked: " + address);
       await refetch();
     },
-    [smartAccount, chain, client, sendTx, refetch],
+    [smartAccount, sendTx, refetch],
   );
 
   return (
