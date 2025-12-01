@@ -480,13 +480,24 @@ const ListForm: React.FC<{
                   ],
                 })
               }
-              onTransactionConfirmed={(receipt) => {
-                // Extract the listing ID from transaction logs/events
-                // The createListing function returns the listing ID
-                console.log("Transaction receipt:", receipt);
-                // For now, we'll use a placeholder - the smart contract emits the listingId
-                // You can parse it from the logs if needed
-                handleCreateListing(BigInt(1)); // This will be incremented by the contract
+              onTransactionConfirmed={async (receipt) => {
+                console.log("✅ Transaction confirmed:", receipt);
+                
+                try {
+                  // Get the listing ID from the "Listed" event in the transaction logs
+                  const listingId = await readContract({
+                    contract: marketplaceContract,
+                    method: "function listingCounter() view returns (uint256)",
+                    params: [],
+                  });
+                  
+                  console.log("📋 Blockchain Listing ID:", listingId.toString());
+                  await handleCreateListing(listingId);
+                } catch (error) {
+                  console.error("Error getting listing ID:", error);
+                  // Fallback: try to get latest listing counter
+                  alert("⚠️ Listing created on blockchain but failed to save to database. Please refresh the page.");
+                }
               }}
               onError={(error) => {
                 console.error("Listing error:", error);
