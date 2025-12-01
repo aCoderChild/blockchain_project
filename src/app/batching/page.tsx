@@ -393,11 +393,11 @@ const BatchMintingHome = () => {
                     <button
                       key={id}
                       onClick={() => {
-                        const newSelections = { ...settings.nftSelections } as Record<string, string>;
+                        const newSelections = { ...settings.nftSelections };
                         if (isSelected) {
-                          delete newSelections[id];
+                          delete newSelections[id as keyof typeof settings.nftSelections];
                         } else {
-                          newSelections[id] = "1";
+                          newSelections[id as keyof typeof settings.nftSelections] = "1";
                         }
                         setSettings({ ...settings, nftSelections: newSelections });
                       }}
