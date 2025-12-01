@@ -393,7 +393,7 @@ const BatchMintingHome = () => {
                     <button
                       key={id}
                       onClick={() => {
-                        const newSelections = { ...settings.nftSelections };
+                        const newSelections = { ...settings.nftSelections } as Record<string, string>;
                         if (isSelected) {
                           delete newSelections[id];
                         } else {
