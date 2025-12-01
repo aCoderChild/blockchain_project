@@ -4,5 +4,9 @@
   "installCommand": "npm install",
   "framework": "nextjs",
   "regions": ["sfo1"],
-  "public": true
+  "public": true,
+  "protectionBypass": false,
+  "env": [
+    "NEXT_PUBLIC_TEMPLATE_CLIENT_ID"
+  ]
 }
