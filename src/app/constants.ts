@@ -18,6 +18,7 @@ export const chain = sepolia;
 export const tokenDropAddress = "0xB559DbB23fb9c383E759404B70591FD3764Ed63b";
 export const editionDropAddress = "0xa2c644D07a78aD12A71c75D5185Fc6885D4bBb48";
 export const editionDropTokenId = 9n;
+export const marketplaceAddress = "0x3C4cB2ABecfFA20b0bE9b05d1E81C45bc46c5a7a";
 
 export const editionDropContract = getContract({
 	address: editionDropAddress,
@@ -27,6 +28,12 @@ export const editionDropContract = getContract({
 
 export const tokenDropContract = getContract({
 	address: tokenDropAddress,
+	chain,
+	client,
+});
+
+export const marketplaceContract = getContract({
+	address: marketplaceAddress,
 	chain,
 	client,
 });

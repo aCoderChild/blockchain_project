@@ -393,7 +393,7 @@ const BatchMintingHome = () => {
                     <button
                       key={id}
                       onClick={() => {
-                        const newSelections = { ...settings.nftSelections };
+                        const newSelections: any = { ...settings.nftSelections };
                         if (isSelected) {
                           delete newSelections[id];
                         } else {
@@ -436,7 +436,7 @@ const BatchMintingHome = () => {
                             max="10"
                             value={qty}
                             onChange={(e) => {
-                              const newSelections = { ...settings.nftSelections };
+                              const newSelections: any = { ...settings.nftSelections };
                               newSelections[id] = e.target.value;
                               setSettings({ ...settings, nftSelections: newSelections });
                             }}
