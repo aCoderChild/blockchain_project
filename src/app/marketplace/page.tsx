@@ -571,16 +571,21 @@ const MarketplaceListingCard: React.FC<{
     tokenId: BigInt(listing.tokenId),
   });
 
-  // Check blockchain listing status if blockchainListingId exists
-  const { data: blockchainListing } = useReadContract({
-    contract: marketplaceContract,
-    method: "function getListing(uint256 listingId) view returns (address seller, address nftContract, uint256 tokenId, uint256 quantity, uint256 pricePerItem, bool active)",
-    params: [BigInt(listing.blockchainListingId || 0)],
-  });
+  // Check blockchain listing status ONLY if blockchainListingId exists
+  const { data: blockchainListing } = useReadContract(
+    listing.blockchainListingId ? {
+      contract: marketplaceContract,
+      method: "function getListing(uint256 listingId) view returns (address seller, address nftContract, uint256 tokenId, uint256 quantity, uint256 pricePerItem, bool active)",
+      params: [BigInt(listing.blockchainListingId)],
+    } : undefined
+  );
 
   // Log listing data for debugging
   useEffect(() => {
-    if (!listing.blockchainListingId) return;
+    if (!listing.blockchainListingId) {
+      console.log("📋 Listing without blockchain ID:", listing.id, listing.collectionName);
+      return;
+    }
     
     console.log("📋 Listing card loaded:", {
       firebaseId: listing.id,
@@ -596,14 +601,17 @@ const MarketplaceListingCard: React.FC<{
   }, [listing, blockchainListing]);
 
   // Automatically update Firebase if blockchain listing is inactive
+  // ONLY check if we have a valid blockchainListingId
   useEffect(() => {
+    if (!listing.blockchainListingId) return; // Skip if no blockchain ID
+    
     if (blockchainListing && !blockchainListing[5] && listing.status === "active") {
       // blockchainListing[5] is the 'active' boolean
       console.log(`Listing ${listing.id} is inactive on blockchain, updating Firebase...`);
       updateListingStatus(listing.id, "sold");
       onPurchased();
     }
-  }, [blockchainListing, listing.id, listing.status, onPurchased]);
+  }, [blockchainListing, listing.id, listing.blockchainListingId, listing.status, onPurchased]);
 
   const handlePurchase = async () => {
     if (!buyerAddress) {
